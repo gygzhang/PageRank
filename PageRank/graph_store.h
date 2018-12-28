@@ -5,6 +5,9 @@
 using namespace std;
 #define INT_MAX _CRT_INT_MAX
 #define MAX_VERTEX_NUM 20
+
+#define N = 3;
+
 //数组的方式
 typedef enum { DG, DN, UDG, UDN }GraphKind;
 typedef void* InfoType;
@@ -43,195 +46,30 @@ typedef struct QQueue {
 	int front, rear;
 };
 
-void InitQueue(QQueue* Q) {
-	Q->data = (double*)malloc(20 * sizeof(double));
-	Q->front = Q->rear = 0;
-}
+void InitQueue(QQueue* Q);
 
-void EnQueue(QQueue* Q, double data) {
-	Q->data[Q->rear++] = data;
-}
+void EnQueue(QQueue* Q, double data);
 
-void DeQueue(QQueue *Q, double *v) {
-	*v = Q->data[Q->front++];
-}
+void DeQueue(QQueue *Q, double *v);
 
-bool QueueIsEmpty(QQueue Q) {
-	return Q.front == Q.rear;
-}
+bool QueueIsEmpty(QQueue Q);
+int LOC(MGraph G, double a);
 
-int LOC(MGraph G, double a) {
-	for (int i = 0; i < G.vexnum; i++) {
-		if (a == G.vexs[i]) return i;
-	}
-}
+int LOC(ALGraph G, double a);
 
-int LOC(ALGraph G, double a) {
-	for (int i = 0; i < G.vexnum; i++) {
-		if (a == G.vertices[i].data) return i;
-	}
-}
+ArcNode* GetTail(ArcNode *AD);
 
-ArcNode* GetTail(ArcNode *AD) {
-	ArcNode *a = AD;
-	while (a->nextarc != NULL) {
-		a = a->nextarc;
-	}
-	return a;
-}
-
-void CreateUDN(ALGraph *G) {
-	scanf("%d %d", &G->vexnum, &G->arcnum);
-	for (int i = 0; i < G->vexnum; i++) {
-		scanf("%lf", &G->vertices[i].data);
-		G->vertices[i].firstarc = NULL;
-	}
-	double a, b;
-	//for (int i = 0; i < G->vexnum; i++) {
-	while (true)
-	{
-		scanf("%lf %lf", &a, &b);
-		if (a == 0 && b == 0) {
-			//G->vertices[LOC(G,)].firstarc = NULL;
-			return;
-		}
-		if (G->vertices[LOC(*G, a)].firstarc == NULL)
-		{
-			G->vertices[LOC(*G, a)].firstarc = (ArcNode*)malloc(sizeof(ArcNode));
-			int m = LOC(*G, b);
-			G->vertices[LOC(*G, a)].firstarc->adjvex = m;
-			G->vertices[LOC(*G, a)].firstarc->info = NULL;
-			G->vertices[LOC(*G, a)].firstarc->nextarc = NULL;
-		}
-		else {
-			ArcNode* A = GetTail(G->vertices[LOC(*G, a)].firstarc);
-			A->nextarc = (ArcNode*)malloc(sizeof(ArcNode));
-			int m = LOC(*G, b);
-			A->nextarc->adjvex = m;
-			A->info = NULL;
-			A->nextarc->nextarc = NULL;
-		}
-	}
-
-	//}
-
-}
+void CreateUDN(ALGraph *G);
 
 
 
-void CreateDN(ALGraph *G) {
-	scanf("%d %d", &G->vexnum, &G->arcnum);
-	for (int i = 0; i < G->vexnum; i++) {
-		scanf("%lf", &G->vertices[i].data);
-		G->vertices[i].firstarc = NULL;
-	}
-	double a, b, w;
-	//for (int i = 0; i < G->vexnum; i++) {
-	while (true)
-	{
-		scanf("%lf %lf %lf", &a, &b, &w);
-		if (a == 0 && b == 0 && w == 0) {
-			//G->vertices[LOC(G,)].firstarc = NULL;
-			return;
-		}
-		if (G->vertices[LOC(*G, a)].firstarc == NULL)
-		{
-			G->vertices[LOC(*G, a)].firstarc = (ArcNode*)malloc(sizeof(ArcNode));
-			int m = LOC(*G, b);
-			G->vertices[LOC(*G, a)].firstarc->adjvex = m;
-			G->vertices[LOC(*G, a)].firstarc->weight = w;
-			G->vertices[LOC(*G, a)].firstarc->info = NULL;
-			G->vertices[LOC(*G, a)].firstarc->nextarc = NULL;
-		}
-		else {
-			ArcNode* A = GetTail(G->vertices[LOC(*G, a)].firstarc);
-			A->nextarc = (ArcNode*)malloc(sizeof(ArcNode));
-			int m = LOC(*G, b);
-			A->nextarc->adjvex = m;
-			A->nextarc->weight = w;
-			A->info = NULL;
-			A->nextarc->nextarc = NULL;
-		}
-	}
+void CreateDN(ALGraph *G);
 
-	//}
+void CreateDG(ALGraph *G);
 
-}
+void CreateUDG(MGraph *G);
 
-void CreateDG(ALGraph *G) {
-	scanf("%d %d", &G->vexnum, &G->arcnum);
-	for (int i = 0; i < G->vexnum; i++) {
-		scanf("%lf", &G->vertices[i].data);
-		G->vertices[i].firstarc = NULL;
-	}
-	double a, b;
-	//for (int i = 0; i < G->vexnum; i++) {
-	while (true)
-	{
-		scanf("%lf %lf", &a, &b);
-		if (a == 0 && b == 0) {
-			//G->vertices[LOC(G,)].firstarc = NULL;
-			return;
-		}
-		if (G->vertices[LOC(*G, a)].firstarc == NULL)
-		{
-			G->vertices[LOC(*G, a)].firstarc = (ArcNode*)malloc(sizeof(ArcNode));
-			int m = LOC(*G, b);
-			G->vertices[LOC(*G, a)].firstarc->adjvex = m;
-			G->vertices[LOC(*G, a)].firstarc->info = NULL;
-			G->vertices[LOC(*G, a)].firstarc->nextarc = NULL;
-		}
-		else {
-			ArcNode* A = GetTail(G->vertices[LOC(*G, a)].firstarc);
-			A->nextarc = (ArcNode*)malloc(sizeof(ArcNode));
-			int m = LOC(*G, b);
-			A->nextarc->adjvex = m;
-			A->info = NULL;
-			A->nextarc->nextarc = NULL;
-		}
-	}
-
-	//}
-
-}
-
-void CreateUDG(MGraph *G) {
-	scanf("%d %d", &G->vexnum, &G->arcnum);
-	//getchar();
-	for (int i = 0; i < G->vexnum; i++) scanf("%lf", &(G->vexs[i]));
-	for (int i = 0; i < G->vexnum; i++)
-		for (int j = 0; j < G->vexnum; j++) {
-			G->arcs[i][j].adj = INT_MAX;
-			G->arcs[i][j].info = NULL;
-		}
-	double a, b, w; int i, j;
-	for (int k = 0; k < G->arcnum; k++) {
-		scanf("%lf %lf %lf", &a, &b, &w);
-		i = LOC(*G, a); j = LOC(*G, b);
-		G->arcs[i][j].adj = w;
-		G->arcs[j][i] = G->arcs[i][j];
-	}
-}
-
-void CreateDN(MGraph *G) {
-	scanf("%d %d", &G->vexnum, &G->arcnum);
-	//getchar();
-	for (int i = 0; i < G->vexnum; i++) scanf("%lf", &(G->vexs[i]));
-	for (int i = 0; i < G->vexnum; i++)
-		for (int j = 0; j < G->vexnum; j++) {
-			G->arcs[i][j].adj = INT_MAX;
-			G->arcs[i][j].info = NULL;
-		}
-	double a, b, w; int i, j;
-	for (int k = 0; k < 2 * G->arcnum; k++) {
-		scanf("%lf %lf %lf", &a, &b, &w);
-		//if (a == b == w == 0) return;
-		if (a == 0 && 0 == w && b == 0) return;
-		i = LOC(*G, a); j = LOC(*G, b);
-		G->arcs[i][j].adj = w;
-		//G->arcs[j][i] = G->arcs[i][j];
-	}
-}
+void CreateDN(MGraph *G);
 /*
 6 17
 1 2 3 4 5 6
@@ -254,153 +92,25 @@ void CreateDN(MGraph *G) {
 6 3 1
 0 0 0
 */
-void CreateGraph(MGraph *G) {
-	scanf("%d", G->kind);
-	switch (G->kind)
-	{
-		//case DG:return CreateDG(G); break;
-		//case DN:return CreateDN(G); break;
-		//case UDG:return CreateUDG(G); break;
-	//case UDN:return CreateUDN(G); break;
-	default:perror("err");
-	}
-}
+void CreateGraph(MGraph *G);
 
-void Print(double v) {
-	cout << v;
-}
+void Print(double v);
+//bool visited[20];
+//void(*V) (double v);
 
-bool visited[20];
-void(*V) (double v);
+double FristAdjVex(MGraph G, double v);
+double NextAdjVex(MGraph G, double v, double w);
 
-double FristAdjVex(MGraph G, double v) {
-	int row = LOC(G, v);
-	//cout << row;
-	for (int col = 0; col <= G.vexnum; col++) {
-		//cout << G.arcs[row][col].adj;
-		if (G.arcs[row][col].adj != INT_MAX)
-			return G.vexs[col];
-	}
-	return -1;
-}
+void DFS(MGraph G, double v);
 
-double NextAdjVex(MGraph G, double v, double w) {
-	int row = LOC(G, v);
-	for (int col = LOC(G, w) + 1; col < G.vexnum; col++) {
-		if (G.arcs[row][col].adj != INT_MAX) return G.vexs[col];
-	}
-	return -1;
-}
+void DFSTraverse(MGraph G, void(*visit)(double v));
+void BFSTraverse(MGraph G, void(*visit)(double v));
 
-void DFS(MGraph G, double v) {
-	//cout << v;
-	//visited[LOC(G, v)] = true;
-	//为什么会出错？？？
-	visited[LOC(G, v)] = true;
-	V(v);
-	bool isdone = true;
-	for (int i = 0; i < G.vexnum; i++) {
-		//==!!!!!!!!!
-		if (visited[i] == false) isdone = false;
-	}
+void BFSTraverse(ALGraph AG, void(*visit)(double v));
 
-	if (isdone == true) return;
+void DFS(ALGraph AG, double a);
 
-	for (double w = FristAdjVex(G, v); w >= 0; w = NextAdjVex(G, v, w)) {
-		if (!visited[LOC(G, w)])
-			DFS(G, w);
-	}
-}
-
-void DFSTraverse(MGraph G, void(*visit)(double v)) {
-	V = visit;
-	for (int i = 0; i < G.vexnum; i++) visited[i] = false;
-	for (int i = 0; i < G.vexnum; i++) {
-		if (!visited[i]) DFS(G, G.vexs[i]);
-	}
-}
-
-void BFSTraverse(MGraph G, void(*visit)(double v)) {
-	QQueue Q; double w, u;
-	for (int i = 0; i < G.vexnum; i++) visited[i] = false;
-	InitQueue(&Q);
-	for (int i = 0; i < G.vexnum; i++) {
-		if (!visited[i]) {
-			visit(G.vexs[i]);
-			visited[i] = true;
-			EnQueue(&Q, G.vexs[i]);
-			while (!QueueIsEmpty(Q)) {
-				DeQueue(&Q, &w);
-				for (u = FristAdjVex(G, w); u >= 0; u = NextAdjVex(G, w, u)) {
-					if (!visited[LOC(G, u)]) {
-						visit(u);
-						visited[LOC(G, u)] = true;
-						EnQueue(&Q, u);
-					}
-				}
-			}
-		}
-	}
-}
-
-void BFSTraverse(ALGraph AG, void(*visit)(double v)) {
-	V = visit;
-	QQueue Q; double w;
-	for (int i = 0; i < AG.vexnum; i++) visited[i] = false;
-	InitQueue(&Q);
-	for (int i = 0; i < AG.vexnum; i++)
-	{
-		if (!visited[i]) {
-			V(AG.vertices[i].data);
-			visited[i] = true;
-			EnQueue(&Q, AG.vertices[i].data);
-			while (!QueueIsEmpty(Q)) {
-				DeQueue(&Q, &w);
-				ArcNode* an = AG.vertices[LOC(AG, w)].firstarc;
-				while (an != NULL) {
-					if (!visited[an->adjvex]) {
-						V(AG.vertices[an->adjvex].data);
-						visited[an->adjvex] = true;
-						EnQueue(&Q, AG.vertices[an->adjvex].data);
-					}
-					an = an->nextarc;
-				}
-			}
-		}
-	}
-}
-
-void DFS(ALGraph AG, double a) {
-	V(a);
-	visited[LOC(AG, a)] = true;
-	/*bool isdone = true;
-	for (int i = 0; i < AG.vexnum; i++) {
-		if (visited[i]) isdone = false;
-	}
-	if (isdone) return;*/
-	ArcNode* an = AG.vertices[LOC(AG, a)].firstarc;
-	while (an != NULL) {
-		if (!visited[an->adjvex]) {
-			DFS(AG, AG.vertices[an->adjvex].data);
-		}
-		//如果这个该节点的一个相邻节点被访问过，那么就找另一个相邻的节点
-		else {
-			an = an->nextarc;
-			//如果这个节点不为空，且没有访问过，那么DFS它
-			if (an && !visited[an->adjvex])	DFS(AG, AG.vertices[an->adjvex].data);
-		}
-	}
-}
-
-void DFSTraverse(ALGraph AG, void(*visit)(double v)) {
-	V = visit;
-	for (int i = 0; i < AG.vexnum; i++) visited[i] = false;
-	for (int j = 0; j < AG.vexnum; j++) {
-		if (!visited[j]) {
-			DFS(AG, AG.vertices[j].data);
-		}
-	}
-}
+void DFSTraverse(ALGraph AG, void(*visit)(double v));
 
 
 /*

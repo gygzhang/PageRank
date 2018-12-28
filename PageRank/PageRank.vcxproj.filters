@@ -18,6 +18,15 @@
     <ClCompile Include="pagerank.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="matrix_cal.h">
+      <Filter>头文件</Filter>
+    </ClCompile>
+    <ClCompile Include="matrix_cal.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="graph_store.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="graph_store.h">

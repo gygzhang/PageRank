@@ -115,7 +115,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="matrix_cal.cpp" />
+    <ClCompile Include="matrix_cal.h" />
     <ClCompile Include="pagerank.cpp" />
+    <ClCompile Include="graph_store.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="graph_store.h" />
