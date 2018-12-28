@@ -65,14 +65,14 @@ int main() {
 
 	int *matrix = (int*)malloc(sizeof(int)*100);
 	int *v = (int*)malloc(sizeof(int)*100);
-	int R[N] = { 2,1,8 };
+	//int R[N] = { 2,1,8 };
 	create_matrix(&matrix);
 	//trans(matrix);
 	//int a = inv_num(R);
 	//int b = fac(3);
 	 //int c = mul_f(R, R);
 	//inv(matrix);
-	get_cofactor(&matrix, 0, 1,4, &v);
+	//get_cofactor(&matrix, 0, 1,4, &v);
 	int d = get_det(&matrix, N);
 
 	//inv(matrix);

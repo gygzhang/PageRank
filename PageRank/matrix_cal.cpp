@@ -108,7 +108,7 @@ void inv(int A[N][N]) {
 
 int get_det(int **M,int n) {
 	int sign = 1;
-	static int Det = 0;
+	int Det = 0;
 	int *temp = (int *)malloc(sizeof(int) * 100);
 	if (n == 1) return **M;
 	for (int i = 0; i < n; i++) {
@@ -137,6 +137,14 @@ void get_cofactor(int **A, int i, int j,int size, int **Cofactor)
 			if (a != i && b != j) {
 				(*Cofactor)[c++] = *((*A)+a*N+b);
 			}
+		}
+	}
+}
+
+void substract(int **A,int **B,int **C) {
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			C[i][j] = A[i][j] - B[i][j];
 		}
 	}
 }
