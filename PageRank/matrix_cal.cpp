@@ -6,23 +6,26 @@ using namespace std;
 
 //#define N 3
 
-void dial_inv(int M[N][N]) {
+void dial_inv(int **M) {
 	for (int i = 0; i < N; i++)
 	{
 		for (int j = 0; j < N; j++) {
 			if (i == j) {
-				M[i][j] = 1 / M[i][j];
+				*(*M+i*N+j) = 1.0/(*(*M+i*N+j));
 			}
 		}
 	}
 }
 
-void mul(int A[N][N], int B[N][N], int C[N][N]) {
+void mul(int *A, int *B, double **C) {
 	for (int i = 0; i < N; i++) {
 		for (int j = 0; j < N; j++) {
 			for (int k = 0; k < N; k++) {
-				C[i][j] += A[j][k] * B[k][j];
+				 double s =(double)*(A+i*N+k) * *(B+k*N+j);
+				 *(*C + i * N + j) += s;
+				cout << "asd";			
 			}
+			
 		}
 	}
 }
@@ -108,20 +111,18 @@ void inv(int A[N][N]) {
 
 
 int get_det(int **M,int n) {
-	static int sign=1;
-	static int Det = 0;
+	int sign=1;
+	int Det = 0;
 	
 	int *temp = (int *)malloc(sizeof(int) * 100);
 	if (n == 1) return **M;
 	if (n == 2) {
-		int d = (**M) * (*(*M + 3)) - *(*M + 1) * (*(*M + 2));
-		return d;
+		return (**M) * (*(*M + 3)) - *(*M + 1) * (*(*M + 2));
 	}
 	if(n>2){
 	for (int i = 0; i < n; i++) {
-		get_cofactor(M, 0, i, n, &temp);
-		int g = *((*M) + i)*get_det(&temp, n-1);
-		Det += sign *g;
+		get_submatrix_by_i_j(M, 0, i, n, &temp);
+		Det+=sign* *((*M) + i)*get_det(&temp, n-1);
 		sign = -sign;
 		
 	}
@@ -162,62 +163,49 @@ int get_det(int **M,int n) {
 	
 }
 
-void test()
+int get_algebraic_cofactor(int ** A, int i, int j)
 {
-	int i, mini, tmp;
-	int inputData[1000] = { 0 }, dataCount = 0;  /* inputData用于保存输入的数据，dataCount记录输入数据的个数 */
-
-	printf("Please input numbers:");
-	for (i = 0; i < 1000; i++)
-	{
-		scanf("%d", &inputData[i]);
-		if (-222 == inputData[i])
-		{
-			break;
-		}
-		dataCount++;
-	}
-
-	for (i = 0; i < dataCount - 1; i++)
-	{
-		mini = XunZhao(i, inputData, dataCount);  /* userCode(<50字符): 调用函数寻找第i个较小的数 */
-		if (mini != i)
-		{
-			tmp = inputData[mini];
-			inputData[mini] = inputData[i];
-			inputData[i] = tmp;
-		}
-	}
-
-	printf("\nOutput:\n");
-	for (i = 0; i < dataCount; i++)
-	{
-		printf("%-6d", inputData[i]);
-
-		if (((i + 1) % 6) != 0 && i != dataCount - 1)
-		{
-			printf(",");
-		}
-		else
-		{
-			printf("\n");
-		}
-	}
-
+	int *t = (int *)malloc(sizeof(int) * 100);
+	get_submatrix_by_i_j(A, i, j, N, &t);
+	return sign(i + j) * get_det(&t, N-1);
 }
 
-int XunZhao(int i, int str[], int n)
+void get_adjoint_matrix(int ** A, int size, double ** B)
 {
-	int j;
-	int mini = i;
-	for (j = i + 1; j < n; j++)
+	for (int i = 0; i < size; i++)
 	{
-		if (str[i] > str[j])
-			mini = j;
+		for (int j = 0; j < size; j++) {
+			int temp;
+			temp = get_algebraic_cofactor(A, i, j);
+			*(*B + j * size + i) = temp;
+		}
 	}
+}
 
-	return mini;
+void get_inverse_matrix(int ** A, int size, double ** B)
+{
+	int determinant = get_det(A, size);
+	//int *temp = (int *)malloc(sizeof(int) * 100);
+	get_adjoint_matrix(A, size, B);
+	munber_mul_matrix(B, size, 1.0/determinant);
+}
 
+void munber_mul_matrix(double ** A, int size,double num)
+{
+	for (int i = 0; i < size; i++) {
+		for (int j = 0; j < size; j++) {
+			*(*A + i * size + j) *= num;
+		}
+	}
+}
+
+void gen_identity_matrix(double ** M, int size)
+{
+	for (int i = 0; i < size; i++) {
+		for (int j = 0; j < size; j++) {
+			*(*M + i * size + j) = 1;
+		}
+	}
 }
 
 
@@ -230,20 +218,27 @@ void create_matrix(int** M) {
 	}
 }
 
-void get_cofactor(int **A, int i, int j,int size, int **Cofactor)
+void get_submatrix_by_i_j(int **A, int i, int j,int size, int **Cofactor)
 {
 	int c = 0;
-	for (int a = 0; a < N; a++) {
-		for (int b = 0; b < N; b++) {
+	for (int a = 0; a < size; a++) {
+		for (int b = 0; b < size; b++) {
 			if (a != i && b != j) {
-				*((*Cofactor)+c) = *((*A)+a*N+b);
+				*((*Cofactor)+c) = *((*A)+a*size+b);
 				c++;
 			}
 		}
 	}
 }
 
-void substract(int **A,int **B,int **C) {
+int ** get_submatrix_by_i_j(int ** A, int i, int j, int size)
+{
+	int *temp = (int *)malloc(sizeof(int) * 100);
+	get_submatrix_by_i_j(A, i, j, size, &temp);
+	return &temp;
+}
+
+void substract(double **A,double **B,double **C) {
 	for (int i = 0; i < N; i++) {
 		for (int j = 0; j < N; j++) {
 			C[i][j] = A[i][j] - B[i][j];
