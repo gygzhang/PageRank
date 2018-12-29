@@ -5,7 +5,8 @@
 #include<stdlib.h>
 #include<string.h>
 
-#define N 3
+#define N 4
+
 
 void dial_inv(int M[N][N]); 
 
@@ -27,3 +28,8 @@ void create_matrix(int** M);
 void get_cofactor(int **A, int i,int j,int size, int **Cofactor);
 
 int get_det(int **M, int n);
+
+void test();
+
+int XunZhao(int i, int str[], int n);
+

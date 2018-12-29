@@ -27,8 +27,7 @@ void pankrank_iteration(double *R, double error, MGraph *G,double d,int *outlink
 		for (int i = 0; i < N; i++) {
 			for (int j = 0; j < N; j++) {
 				if (i != j && G->arcs[i][j].adj != INT_MAX) {
-					temp[i] += R[j] / outlink[j];
-					//temp[i] = R[i];
+					temp[i] += (double)R[j] / outlink[j];
 				}
 			}
 			R[i] = (1 - d) / N + d * temp[i];
@@ -50,19 +49,19 @@ int main() {
 	//cout << 1 / 0;
 	/*MGraph G;
 	CreateDN(&G);
-	double R[N];
+	double R[N]; //= (double *)malloc(sizeof(double)*N);
 	int outlink[N] = { 0 };
 	double d = 0.85;
-	double err = 1e-305;
+	double err = 1e-35;
 	for (int i = 0; i < 6; i++) {
-		R[i] = 1 / N;
+		*(R+i) = 1.0 / N;
 	}
 	get_outlink(G, outlink);
 	pankrank_iteration(R, err, &G, 0.85, outlink);
 	for (double r : R) {
 		cout << r << endl;
 	}*/
-
+	//test();
 	int *matrix = (int*)malloc(sizeof(int)*100);
 	int *v = (int*)malloc(sizeof(int)*100);
 	//int R[N] = { 2,1,8 };
@@ -72,8 +71,12 @@ int main() {
 	//int b = fac(3);
 	 //int c = mul_f(R, R);
 	//inv(matrix);
-	//get_cofactor(&matrix, 0, 1,4, &v);
-	int d = get_det(&matrix, N);
+	get_cofactor(&matrix, 0, 1,4, &v);
+	get_cofactor(&v, 0, 1, 3, &v);
+	int e=0;
+	e = get_det(&matrix, N);
+	//e = det(matrix, N);
+	//cout<<endl<<e;
 
 	//inv(matrix);
 
@@ -82,8 +85,17 @@ int main() {
 }
 /*
 1 2 0
-1 1 4
-3 1 8
+-1 1 -4
+3 -1 8
+-142
+5 1 1 1
+-2 2 -1 4
+-2 -3 -1 -5
+0 1 2 11
+
+1 2
+3 4
 */
+
 
 
