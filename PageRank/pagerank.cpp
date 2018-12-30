@@ -121,10 +121,10 @@ int main() {
 	*(R+i) = 1.0 / N;
 	}
 	get_outlink(G, outlink);
-	/*pankrank_iteration(R, err, &G, 0.85, outlink);
+	pankrank_iteration(R, err, &G, 0.85, outlink);
 	for (double r : R) {
 		cout << r << endl;
-	}*/
+	}
 	//test();
 	double *matrix = (double*)malloc(sizeof(double)*100);
 	double *v = (double*)malloc(sizeof(double)*100);
