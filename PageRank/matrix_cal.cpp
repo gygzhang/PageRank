@@ -6,7 +6,7 @@ using namespace std;
 
 //#define N 3
 
-void dial_inv(int **M) {
+void dial_inv(double **M) {
 	for (int i = 0; i < N; i++)
 	{
 		for (int j = 0; j < N; j++) {
@@ -17,26 +17,25 @@ void dial_inv(int **M) {
 	}
 }
 
-void mul(int *A, int *B, double **C) {
+void square_martix_mul(double *A, double *B, double **C) {
 	for (int i = 0; i < N; i++) {
 		for (int j = 0; j < N; j++) {
 			for (int k = 0; k < N; k++) {
 				 double s =(double)*(A+i*N+k) * *(B+k*N+j);
-				 *(*C + i * N + j) += s;
-				cout << "asd";			
+				 *(*C + i * N + j) += s;		
 			}
 			
 		}
 	}
 }
 
-void trans(int A[N][N]) {
+void trans(double** A) {
 	for (int i = 0; i < N; i++) {
 		for (int j = 0; j < N; j++) {
 			if (i < j) {
-				int temp = A[i][j];
-				A[i][j] = A[j][i];
-				A[j][i] = temp;
+				double temp =*(*A+i*N+j);
+				*(*A + i * N + j) = *(*A + j * N + i);
+				*(*A + j * N + i) = temp;
 			}
 		}
 	}
@@ -110,11 +109,11 @@ void inv(int A[N][N]) {
 
 
 
-int get_det(int **M,int n) {
+int get_det(double **M,int n) {
 	int sign=1;
 	int Det = 0;
 	
-	int *temp = (int *)malloc(sizeof(int) * 100);
+	double *temp = (double *)malloc(sizeof(double) * 100);
 	if (n == 1) return **M;
 	if (n == 2) {
 		return (**M) * (*(*M + 3)) - *(*M + 1) * (*(*M + 2));
@@ -163,14 +162,14 @@ int get_det(int **M,int n) {
 	
 }
 
-int get_algebraic_cofactor(int ** A, int i, int j)
+int get_algebraic_cofactor(double ** A, int i, int j)
 {
-	int *t = (int *)malloc(sizeof(int) * 100);
+	double *t = (double *)malloc(sizeof(double) * 100);
 	get_submatrix_by_i_j(A, i, j, N, &t);
 	return sign(i + j) * get_det(&t, N-1);
 }
 
-void get_adjoint_matrix(int ** A, int size, double ** B)
+void get_adjoint_matrix(double ** A, int size, double ** B)
 {
 	for (int i = 0; i < size; i++)
 	{
@@ -182,7 +181,7 @@ void get_adjoint_matrix(int ** A, int size, double ** B)
 	}
 }
 
-void get_inverse_matrix(int ** A, int size, double ** B)
+void get_inverse_matrix(double ** A, int size, double ** B)
 {
 	int determinant = get_det(A, size);
 	//int *temp = (int *)malloc(sizeof(int) * 100);
@@ -218,7 +217,7 @@ void create_matrix(int** M) {
 	}
 }
 
-void get_submatrix_by_i_j(int **A, int i, int j,int size, int **Cofactor)
+void get_submatrix_by_i_j(double **A, int i, int j,int size, double **Cofactor)
 {
 	int c = 0;
 	for (int a = 0; a < size; a++) {
@@ -231,17 +230,29 @@ void get_submatrix_by_i_j(int **A, int i, int j,int size, int **Cofactor)
 	}
 }
 
-int ** get_submatrix_by_i_j(int ** A, int i, int j, int size)
-{
-	int *temp = (int *)malloc(sizeof(int) * 100);
-	get_submatrix_by_i_j(A, i, j, size, &temp);
-	return &temp;
-}
+//double ** get_submatrix_by_i_j(double ** A, int i, int j, int size)
+//{
+//	double *temp = (double *)malloc(sizeof(double) * 100);
+//	get_submatrix_by_i_j(A, i, j, size, &temp);
+//	return &temp;
+//}
 
 void substract(double **A,double **B,double **C) {
 	for (int i = 0; i < N; i++) {
 		for (int j = 0; j < N; j++) {
-			C[i][j] = A[i][j] - B[i][j];
+			*(*C+i*N+j) = *(*A + i * N + j) - *(*B + i * N + j);
+		}
+	}
+}
+
+void comm_matrix_mul(double ** A, int m, int r, int n, double ** B, double ** C)
+{
+	for (int i = 0; i < m; i++) {
+		for (int j = 0; j < r; j++) {
+			for (int k = 0; k < n; k++) {
+				*(*C + i * m + j) += *(*A + i * r + k)**(*B + k * n + j);
+			}
+
 		}
 	}
 }

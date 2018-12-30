@@ -6,7 +6,7 @@ using namespace std;
 #define INT_MAX _CRT_INT_MAX
 #define MAX_VERTEX_NUM 20
 
-#define N 5
+#define N 8
 
 //数组的方式
 typedef enum { DG, DN, UDG, UDN }GraphKind;

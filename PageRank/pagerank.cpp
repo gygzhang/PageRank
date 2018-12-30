@@ -41,18 +41,20 @@ void pankrank_iteration(double *R, double error, MGraph *G,double d,int *outlink
 
 }
 
-void get_K(int *outlink, int **K) {
+void get_K(int *outlink, double **K) {
 	for (int i = 0; i < N; i++) {
 		for (int j = 0; j < N; j++) {
 			if (i == j) {
-				*(*K + i * N + j) = *(outlink + i);
+				*(*K + i * N + j) = (double)*(outlink + i);
+				cout << K;
 			}
+			else *(*K + i * N + j) = 0;
 		}
 	}
 }
 
-void get_M(AdjMatrix A,int *K,double **M) {
-	int *temp = (int *)malloc(sizeof(int) * 100);
+void get_M(AdjMatrix A,double *K,double **M) {
+	double *temp = (double *)malloc(sizeof(double) * 100);
 	for (int i = 0; i < N; i++) {
 		for (int j = 0; j < N; j++) {
 			if((*A)->adj==1)
@@ -63,28 +65,39 @@ void get_M(AdjMatrix A,int *K,double **M) {
 		}
 	}
 	dial_inv(&K);
-	mul(K, temp, M);
+	square_martix_mul(K, temp, M);
+	trans(M);
 }
 
+void get_col_vector_contains_ones(double **I,int size) {
+	for (int i = 0; i < size; i++) {
+		*(*I + i) = 1;
+	}
+}
 
 
 void pagerank_matrix(AdjMatrix Adj,int *outlink,int d) {
 	double *indentity_matrix = (double*)malloc(sizeof(double) * 100);
 	double *M = (double*)malloc(sizeof(double) * 100);
 	double *H = (double*)malloc(sizeof(double) * 100);
-	int *K = (int *)malloc(sizeof(int) * 100);
+	double *U = (double*)malloc(sizeof(double) * 100);
+	double *I = (double*)malloc(sizeof(double) * 100);
+	double *R = (double*)malloc(sizeof(double) * 100);
+	double *K = (double *)malloc(sizeof(double) * 100);
 	gen_identity_matrix(&indentity_matrix, N);
 	get_K(outlink, &K);
 	get_M(Adj, K, &M);
 	munber_mul_matrix(&M, N, d);
 	substract(&indentity_matrix, &M, &H);
-
-
+	get_inverse_matrix(&H, N, &U);
+	get_col_vector_contains_ones(&I, N);
+	comm_matrix_mul(&U, N, N, 1, &I, &R);
+	cout << "aa";
 }
 
 int main() {
 	//cout << 1 / 0;
-	/*MGraph G;
+	MGraph G;
 	CreateDN(&G);
 	double R[N]; //= (double *)malloc(sizeof(double)*N);
 	int outlink[N] = { 0 };
@@ -94,7 +107,7 @@ int main() {
 		*(R+i) = 1.0 / N;
 	}
 	get_outlink(G, outlink);
-	pankrank_iteration(R, err, &G, 0.85, outlink);
+	/*pankrank_iteration(R, err, &G, 0.85, outlink);
 	for (double r : R) {
 		cout << r << endl;
 	}*/
@@ -103,7 +116,7 @@ int main() {
 	double *v = (double*)malloc(sizeof(double)*100);
 	//int R[N] = { 2,1,8 };
 	memset(v, 0, sizeof(double) * 100);
-	create_matrix(&matrix);
+	//create_matrix(&matrix);
 	//trans(matrix);
 	//int a = inv_num(R);
 	//int b = fac(3);
@@ -117,7 +130,8 @@ int main() {
 	//get_adjoint_matrix(&matrix, N, &v);
 	//e = det(matrix, N);
 	//cout<<endl<<e;
-	mul(matrix, matrix, &v);
+	//square_martix_mul(matrix, matrix, &v);
+	pagerank_matrix(G.arcs, outlink, 0.85);
 
 	//inv(matrix);
 
