@@ -45,7 +45,7 @@ void get_K(int *outlink, double **K) {
 	for (int i = 0; i < N; i++) {
 		for (int j = 0; j < N; j++) {
 			if (i == j) {
-				*(*K + i * N + j) = (double)*(outlink + i);
+				*(*K + i * N + j) = *(outlink + i);
 				cout << K;
 			}
 			else *(*K + i * N + j) = 0;
@@ -57,8 +57,10 @@ void get_M(AdjMatrix A,double *K,double **M) {
 	double *temp = (double *)malloc(sizeof(double) * 100);
 	for (int i = 0; i < N; i++) {
 		for (int j = 0; j < N; j++) {
-			if((*A)->adj==1)
-			*(temp + i * N + j) = (*A)->adj;
+			if(A[i][j].adj==1){
+				*(temp + i * N + j) = (double)A[i][j].adj == 1;
+				//cout << "asd";
+			}
 			else {
 				*(temp + i * N + j) = 0;
 			}
@@ -66,17 +68,17 @@ void get_M(AdjMatrix A,double *K,double **M) {
 	}
 	dial_inv(&K);
 	square_martix_mul(K, temp, M);
-	trans(M);
+	//trans(M);
 }
 
 void get_col_vector_contains_ones(double **I,int size) {
 	for (int i = 0; i < size; i++) {
-		*(*I + i) = 1;
+		*(*I + i*size) = 1;
 	}
 }
 
 
-void pagerank_matrix(AdjMatrix Adj,int *outlink,int d) {
+void pagerank_matrix(AdjMatrix Adj,int *outlink,double d) {
 	double *indentity_matrix = (double*)malloc(sizeof(double) * 100);
 	double *M = (double*)malloc(sizeof(double) * 100);
 	double *H = (double*)malloc(sizeof(double) * 100);
@@ -84,15 +86,27 @@ void pagerank_matrix(AdjMatrix Adj,int *outlink,int d) {
 	double *I = (double*)malloc(sizeof(double) * 100);
 	double *R = (double*)malloc(sizeof(double) * 100);
 	double *K = (double *)malloc(sizeof(double) * 100);
+	matrix_init(&indentity_matrix, N);
+	matrix_init(&M, N);
+	matrix_init(&H, N);
+	matrix_init(&U, N);
+	matrix_init(&I, N);
+	matrix_init(&R, N);
+	matrix_init(&K, N);
 	gen_identity_matrix(&indentity_matrix, N);
 	get_K(outlink, &K);
 	get_M(Adj, K, &M);
+	trans(&M);
 	munber_mul_matrix(&M, N, d);
 	substract(&indentity_matrix, &M, &H);
+	//matrix_print(H, N);
 	get_inverse_matrix(&H, N, &U);
 	get_col_vector_contains_ones(&I, N);
-	comm_matrix_mul(&U, N, N, 1, &I, &R);
-	cout << "aa";
+	munber_mul_matrix(&I, N, (1 - d) / N);
+	//comm_matrix_mul(&U, N, N, 1, &I, &R);
+	mul_col_vector(&U, N, (1 - d) / N,&R);
+	trans(&R);
+	//cout << "aa";
 }
 
 int main() {
@@ -104,7 +118,7 @@ int main() {
 	double d = 0.85;
 	double err = 1e-35;
 	for (int i = 0; i < N; i++) {
-		*(R+i) = 1.0 / N;
+	*(R+i) = 1.0 / N;
 	}
 	get_outlink(G, outlink);
 	/*pankrank_iteration(R, err, &G, 0.85, outlink);
@@ -112,10 +126,10 @@ int main() {
 		cout << r << endl;
 	}*/
 	//test();
-	int *matrix = (int*)malloc(sizeof(int)*100);
+	double *matrix = (double*)malloc(sizeof(double)*100);
 	double *v = (double*)malloc(sizeof(double)*100);
 	//int R[N] = { 2,1,8 };
-	memset(v, 0, sizeof(double) * 100);
+	//memset(v, 0, sizeof(double) * 100);
 	//create_matrix(&matrix);
 	//trans(matrix);
 	//int a = inv_num(R);
@@ -124,7 +138,7 @@ int main() {
 	//inv(matrix);
 	//get_cofactor(&matrix, 0, 1,4, &v);
 	//get_cofactor(&v, 0, 1, 3, &v);
-	//int e=0;
+	double e=0;
 	//e = get_det(&matrix, N);
 	//get_inverse_matrix(&matrix, N, &v);
 	//get_adjoint_matrix(&matrix, N, &v);

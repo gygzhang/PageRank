@@ -20,6 +20,7 @@ void dial_inv(double **M) {
 void square_martix_mul(double *A, double *B, double **C) {
 	for (int i = 0; i < N; i++) {
 		for (int j = 0; j < N; j++) {
+			*(*C + i * N + j) = 0;
 			for (int k = 0; k < N; k++) {
 				 double s =(double)*(A+i*N+k) * *(B+k*N+j);
 				 *(*C + i * N + j) += s;		
@@ -109,9 +110,9 @@ void inv(int A[N][N]) {
 
 
 
-int get_det(double **M,int n) {
+double get_det(double **M,int n) {
 	int sign=1;
-	int Det = 0;
+	double Det = 0;
 	
 	double *temp = (double *)malloc(sizeof(double) * 100);
 	if (n == 1) return **M;
@@ -162,7 +163,7 @@ int get_det(double **M,int n) {
 	
 }
 
-int get_algebraic_cofactor(double ** A, int i, int j)
+double get_algebraic_cofactor(double ** A, int i, int j)
 {
 	double *t = (double *)malloc(sizeof(double) * 100);
 	get_submatrix_by_i_j(A, i, j, N, &t);
@@ -174,7 +175,7 @@ void get_adjoint_matrix(double ** A, int size, double ** B)
 	for (int i = 0; i < size; i++)
 	{
 		for (int j = 0; j < size; j++) {
-			int temp;
+			double temp;
 			temp = get_algebraic_cofactor(A, i, j);
 			*(*B + j * size + i) = temp;
 		}
@@ -183,7 +184,7 @@ void get_adjoint_matrix(double ** A, int size, double ** B)
 
 void get_inverse_matrix(double ** A, int size, double ** B)
 {
-	int determinant = get_det(A, size);
+	double determinant = get_det(A, size);
 	//int *temp = (int *)malloc(sizeof(int) * 100);
 	get_adjoint_matrix(A, size, B);
 	munber_mul_matrix(B, size, 1.0/determinant);
@@ -194,6 +195,7 @@ void munber_mul_matrix(double ** A, int size,double num)
 	for (int i = 0; i < size; i++) {
 		for (int j = 0; j < size; j++) {
 			*(*A + i * size + j) *= num;
+			cout << "sad";
 		}
 	}
 }
@@ -202,17 +204,18 @@ void gen_identity_matrix(double ** M, int size)
 {
 	for (int i = 0; i < size; i++) {
 		for (int j = 0; j < size; j++) {
-			*(*M + i * size + j) = 1;
+			if(i==j) *(*M + i * size + j) = 1;
+			else *(*M + i * size + j) = 0;
 		}
 	}
 }
 
 
-void create_matrix(int** M) {
+void create_matrix(double** M) {
 	int temp = 0;
 	for (int i = 0; i < N; i++) {
 		for (int j = 0; j < N; j++) {
-			scanf("%d", ((*M)+i*N)+j);
+			scanf("%lf", ((*M)+i*N)+j);
 		}
 	}
 }
@@ -241,19 +244,53 @@ void substract(double **A,double **B,double **C) {
 	for (int i = 0; i < N; i++) {
 		for (int j = 0; j < N; j++) {
 			*(*C+i*N+j) = *(*A + i * N + j) - *(*B + i * N + j);
+			//cout << "a";
 		}
 	}
 }
 
 void comm_matrix_mul(double ** A, int m, int r, int n, double ** B, double ** C)
 {
+	//N N 1
 	for (int i = 0; i < m; i++) {
-		for (int j = 0; j < r; j++) {
-			for (int k = 0; k < n; k++) {
-				*(*C + i * m + j) += *(*A + i * r + k)**(*B + k * n + j);
+		for (int j = 0; j < n; j++) {
+			for (int k = 0; k < r; k++) {
+				*(*C + i * m + j) += *(*A + i * r + k)**(*B + k * n+j);
+				//cout << "a";
 			}
 
 		}
+	}
+}
+
+void matrix_init(double ** A, int size)
+{
+	for (int i = 0; i < size; i++) {
+		for (int j = 0; j < size; j++) {
+			*(*A + i * size + j) = 0;
+		}
+	}
+}
+
+void matrix_print(double * A, int size)
+{
+	cout << endl;
+	for (int i = 0; i < size; i++) {
+		for (int j = 0; j < size; j++) {
+			cout << (*(A + i * size + j))<<" ";
+		}
+		cout << endl;
+	}
+}
+
+void mul_col_vector(double ** A, int size,double I, double ** B)
+{
+	for (int i = 0; i < size; i++) {
+		double temp = 0;
+		for (int j = 0; j < size; j++) {
+			temp += *(*A + i * size + j);
+		}
+		*(*B + i * size) = temp * I;
 	}
 }
 
